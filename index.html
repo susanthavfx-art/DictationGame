@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Learn How To Spell</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#dff8ff;font-family:Arial,sans-serif}
+.game{max-width:1050px;margin:18px auto;background:white;border-radius:24px;overflow:hidden;box-shadow:0 10px 30px #0002}
+.title{background:#3837f2;color:#fff;text-align:center;font-size:clamp(30px,5vw,52px);font-weight:900;padding:15px}
+.title b{color:#fff000}.hud{text-align:center;padding:10px;font-weight:bold}.badge{display:inline-block;background:#eef7ff;border:2px solid #d7eaff;border-radius:20px;padding:7px 16px;margin:3px}
+.scene{height:500px;position:relative;overflow:hidden;background:linear-gradient(#80f1f2 0 48%,#7188a2 48%)}
+.sun{position:absolute;right:25px;top:55px;width:100px;height:100px;background:#ffe35b;border-radius:50%}
+.cloud{position:absolute;width:110px;height:28px;background:white;border-radius:30px}.cloud:before,.cloud:after{content:"";position:absolute;background:white;border-radius:50%}.cloud:before{width:45px;height:45px;left:15px;top:-20px}.cloud:after{width:55px;height:55px;left:48px;top:-27px}
+.c1{left:55px;top:80px}.c2{left:330px;top:125px;transform:scale(.7)}
+.tree{position:absolute;bottom:235px;width:95px;height:150px}.tree:before{content:"";position:absolute;left:40px;bottom:0;width:18px;height:75px;background:#85552e}.tree:after{content:"";position:absolute;left:0;top:0;width:95px;height:100px;background:#73c93e;border-radius:50%;box-shadow:30px 18px 0 #69bb39,-15px 30px 0 #8bd54d}.t1{right:20px}.t2{right:135px;transform:scale(.7)}
+.grass{position:absolute;bottom:215px;left:0;right:0;height:22px;background:#7bc43e}.road{position:absolute;bottom:0;left:0;right:0;height:220px;background:#657b95}.road:before{content:"";position:absolute;top:28px;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#ffd84d 0 70px,transparent 70px 130px)}
+.picture{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);font-size:82px;line-height:1;z-index:5;filter:drop-shadow(0 5px 2px #0002);text-align:center}
+.word{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);display:flex;gap:5px;z-index:5}
+.slot{width:58px;height:68px;background:white;border:3px solid #263238;border-radius:9px;display:grid;place-items:center;font-size:40px;font-weight:900;box-shadow:0 3px #0002}.slot.empty{color:transparent}
+.slot.correct{background:#d5ffc9;border-color:#42a84d;color:#16812d}
+.panel{position:absolute;z-index:10;bottom:25px;left:50%;transform:translateX(-50%);width:min(650px,92%);background:#c3f6ff;border:4px solid #62d6e6;border-radius:20px;padding:15px;text-align:center}
+.choices{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.choice{width:62px;height:55px;border:3px solid white;border-radius:9px;background:white;font-size:30px;font-weight:bold;cursor:pointer;box-shadow:0 3px #0002}.choice:hover{background:#fff3a8}.choice.wrong{opacity:.25}
+.msg{min-height:26px;font-weight:bold;margin-top:7px}.ok{color:#2e7d32}.no{color:#d32f2f}
+.dog{position:absolute;z-index:8;left:6%;bottom:180px;width:82px;height:135px;transition:left .75s ease}
+.head{position:absolute;left:13px;top:8px;width:55px;height:52px;background:#a9612c;border-radius:50%}.body{position:absolute;left:25px;top:52px;width:36px;height:65px;background:#a9612c;border-radius:45%}
+.ear{position:absolute;top:9px;width:22px;height:45px;background:#70401f;border-radius:60%;z-index:1}.e1{left:7px;transform:rotate(15deg)}.e2{right:4px;transform:rotate(-15deg)}
+.eye{position:absolute;top:26px;width:7px;height:8px;background:#111;border-radius:50%;z-index:3}.x1{left:28px}.x2{left:47px}
+.muzzle{position:absolute;left:27px;top:35px;width:30px;height:18px;background:#d78b46;border-radius:50%;z-index:2}.nose{position:absolute;left:39px;top:38px;width:9px;height:7px;background:#111;border-radius:50%;z-index:4}
+.leg{position:absolute;top:108px;width:10px;height:35px;background:#874b24;border-radius:8px}.l1{left:26px}.l2{left:52px}.tail{position:absolute;left:50px;top:60px;width:35px;height:12px;border:7px solid #874b24;border-left:0;border-radius:0 20px 20px 0;transform:rotate(-35deg)}
+.walk .l1{animation:w .3s infinite alternate}.walk .l2{animation:w .3s .15s infinite alternate}@keyframes w{to{transform:rotate(22deg)}}
+.controls{text-align:center;padding:12px}button.ctrl{border:0;border-radius:22px;padding:10px 18px;margin:4px;font-weight:bold;font-size:15px;cursor:pointer}.next{background:#3837f2;color:white}.reset{background:#eee}
+.help{text-align:center;color:#607d8b;padding:0 10px 18px;font-size:14px}
+@media(max-width:700px){.scene{height:520px}.slot{width:43px;height:54px;font-size:31px}.dog{transform:scale(.8);transform-origin:bottom left}}
+</style>
+</head>
+<body>
+<div class="game">
+<div class="title">Learn <b>How To Spell</b></div>
+<div class="hud"><span class="badge">⭐ Score: <span id="score">0</span></span><span class="badge">🔤 Word: <span id="count">1 / 10</span></span></div>
+<div class="scene">
+<div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="tree t1"></div><div class="tree t2"></div><div class="grass"></div><div class="road"></div>
+<div class="dog walk" id="dog"><div class="tail"></div><div class="ear e1"></div><div class="ear e2"></div><div class="head"></div><div class="eye x1"></div><div class="eye x2"></div><div class="muzzle"></div><div class="nose"></div><div class="body"></div><div class="leg l1"></div><div class="leg l2"></div></div>
+<div class="picture" id="picture"></div><div class="word" id="word"></div>
+<div class="panel"><b>🐾 Choose the correct next letter!</b><div class="choices" id="choices"></div><div class="msg" id="msg"></div></div>
+</div>
+<div class="controls"><button class="ctrl next" id="next">➡️ Next Word</button><button class="ctrl reset" id="reset">↻ Restart</button></div>
+<div class="help">Click the letters in the correct order. Each correct letter makes the dog walk forward! 🐶 Wrong = "Try again!" • Correct = "Congratulations!" 🔊</div>
+</div>
+<script>
+const items=[
+["PEOPLE","👨‍👩‍👧‍👦"],["ANIMAL","🐾"],["PLACE","📍"],["THINGS","📦"],["TIME","⏰"],
+["CLOCK","🕒"],["FRIEND","🧑‍🤝‍🧑"],["HOUSE","🏠"],["PARK","🌳"],["SCHOOL","🏫"]
+];
+const words=items.map(x=>x[0]);
+let n=0,score=0,typed="";
+const word=document.getElementById("word"),picture=document.getElementById("picture"),choices=document.getElementById("choices"),msg=document.getElementById("msg"),dog=document.getElementById("dog");
+function sh(a){return [...a].sort(()=>Math.random()-.5)}
+
+function speak(text){
+  if("speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang="en-US"; u.rate=0.85; u.pitch=1.05; u.volume=1;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+function start(){typed="";msg.textContent="";msg.className="msg";document.getElementById("count").textContent=(n+1)+" / "+items.length;
+picture.textContent=items[n][1];
+word.innerHTML="";
+[...words[n]].filter(ch=>/[A-Z]/i.test(ch)).forEach(()=>{let s=document.createElement("div");s.className="slot empty";word.appendChild(s)});dog.style.left="6%";makeChoices()}
+function makeChoices(){choices.innerHTML="";let expected=words[n].replace(/[^A-Z]/gi,"")[typed.length],pool="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").filter(x=>x!==expected);let arr=sh([expected,...sh(pool).slice(0,words[n].length<4?2:3)]);arr.forEach(ch=>{let b=document.createElement("button");b.className="choice";b.textContent=ch;b.onclick=()=>pick(ch,b);choices.appendChild(b)})}
+function pick(ch,b){let cleanWord=words[n].replace(/[^A-Z]/gi,"");let expected=cleanWord[typed.length];if(ch!==expected){b.classList.add("wrong");msg.textContent="Try again! 😊";msg.className="msg no";speak("Try again!");setTimeout(()=>b.classList.remove("wrong"),350);return}typed+=ch;let s=word.children[typed.length-1];s.textContent=ch;s.className="slot correct";score+=5;document.getElementById("score").textContent=score;dog.style.left=(6+typed.length/words[n].replace(/[^A-Z]/gi,"").length*80)+"%";msg.textContent="Great! ⭐";msg.className="msg ok";if(typed===words[n].replace(/[^A-Z]/gi,"")){score+=10;document.getElementById("score").textContent=score;msg.textContent="🎉 Congratulations!";speak("Congratulations!");setTimeout(()=>{n=(n+1)%words.length;start()},1000)}else setTimeout(makeChoices,180)}
+document.getElementById("next").onclick=()=>{n=(n+1)%words.length;start()};document.getElementById("reset").onclick=()=>{n=0;score=0;document.getElementById("score").textContent=0;start()};start();
+</script>
+</body></html>
